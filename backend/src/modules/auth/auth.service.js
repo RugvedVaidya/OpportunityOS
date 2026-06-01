@@ -53,7 +53,8 @@ const loginUser = async (data) => {
         throw new Error("Invalid Password");
     }
 
-    const token = jwtUtil.generateToken(user.id);
+    console.log("USER FROM DB:", user);
+    const token = jwtUtil.generateToken(user);
 
     return {
         token,

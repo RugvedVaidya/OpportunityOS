@@ -8,8 +8,24 @@ const profileRoutes = require("./modules/profile/profile.routes");
 
 const app = express();
 
+// const opportunityRoutes =
+// require("./modules/opportunity/opportunity.routes");
+
+// app.use(
+//     "/api/opportunities",
+//     opportunityRoutes
+// );
+
 app.use(cors());
 app.use(express.json());
+
+const opportunityRoutes =
+require("./modules/opportunity/opportunity.routes");
+
+app.use(
+    "/api/opportunities",
+    opportunityRoutes
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
