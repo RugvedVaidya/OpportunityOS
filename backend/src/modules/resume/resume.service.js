@@ -1,0 +1,93 @@
+const fs = require("fs");
+const pdfParse = require("pdf-parse");
+
+const prisma =
+require("../../config/prisma");
+
+const KNOWN_SKILLS = [
+
+    "Java",
+    "Spring",
+    "Spring Boot",
+    "Redis",
+    "Kafka",
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "PostgreSQL",
+    "MySQL",
+    "MongoDB",
+    "Node.js",
+    "Express",
+    "React",
+    "TypeScript"
+];
+
+const extractSkills =
+(text) => {
+
+    const foundSkills = [];
+
+    const lowerText =
+    text.toLowerCase();
+
+    for (
+        const skill
+        of KNOWN_SKILLS
+    ) {
+
+        if (
+            lowerText.includes(
+                skill.toLowerCase()
+            )
+        ) {
+
+            foundSkills.push(
+                skill
+            );
+        }
+    }
+
+    return foundSkills;
+};
+
+const processResume =
+async (
+    filePath,
+    userId
+) => {
+
+    const dataBuffer =
+    fs.readFileSync(
+        filePath
+    );
+
+    const pdfData =
+    await pdfParse(
+        dataBuffer
+    );
+
+    const skills =
+    extractSkills(
+        pdfData.text
+    );
+
+    const profile =
+    await prisma.profile.update({
+        where: {
+            userId
+        },
+        data: {
+            skills
+        }
+    });
+
+    return {
+        skills,
+        profile
+    };
+};
+
+module.exports = {
+    processResume
+};

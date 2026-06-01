@@ -35,6 +35,16 @@ app.use(
     matchingRoutes
 );
 
+const resumeRoutes =
+require(
+"./modules/resume/resume.routes"
+);
+
+app.use(
+    "/api/resume",
+    resumeRoutes
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 
