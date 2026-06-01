@@ -27,6 +27,14 @@ app.use(
     opportunityRoutes
 );
 
+const matchingRoutes =
+require("./modules/matching/matching.routes");
+
+app.use(
+    "/api/matching",
+    matchingRoutes
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 
