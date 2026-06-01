@@ -31,7 +31,6 @@ model User {
 }
 
 model Profile {
-
   id String @id @default(uuid())
 
   headline String?
@@ -48,7 +47,7 @@ model Profile {
 
   userId String @unique
 
-  user User @relation(fields:[userId], references:[id])
+  user User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
 
@@ -56,7 +55,6 @@ model Profile {
 }
 
 model Opportunity {
-
   id String @id @default(uuid())
 
   title String
@@ -65,11 +63,13 @@ model Opportunity {
 
   description String
 
-  location String?
-
   type OpportunityType
 
-  requiredSkills  String[]
+  requiredSkills String[]
+
+  experienceRequired Int?
+
+  location String?
 
   salaryMin Int?
 

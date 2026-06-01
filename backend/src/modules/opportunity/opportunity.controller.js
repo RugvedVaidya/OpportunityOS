@@ -1,14 +1,12 @@
 const opportunityService =
 require("./opportunity.service");
 
-const createOpportunity = async (req, res) => {
-
-    console.log("REQUEST BODY:", req.body);
+const createOpportunity =
+async (req, res) => {
 
     const opportunity =
-        await opportunityService.createOpportunity(
-            req.body
-        );
+        await opportunityService
+            .createOpportunity(req.body);
 
     return res.status(201).json({
         success: true,
@@ -17,32 +15,39 @@ const createOpportunity = async (req, res) => {
 };
 
 const getAllOpportunities =
-async(req,res) => {
+async (req, res) => {
 
     const page =
-    Number(req.query.page) || 1;
+        Number(req.query.page) || 1;
 
     const limit =
-    Number(req.query.limit) || 10;
+        Number(req.query.limit) || 10;
 
-    const opportunities =
-    await opportunityService
-    .getAllOpportunities(
-        page,
-        limit
-    );
+    const filters = {
+        search: req.query.search,
+        company: req.query.company,
+        type: req.query.type
+    };
 
-    return res.json(opportunities);
+    const result =
+        await opportunityService
+            .getAllOpportunities(
+                page,
+                limit,
+                filters
+            );
+
+    return res.json(result);
 };
 
 const getOpportunityById =
-async(req,res) => {
+async (req, res) => {
 
     const opportunity =
-    await opportunityService
-    .getOpportunityById(
-        req.params.id
-    );
+        await opportunityService
+            .getOpportunityById(
+                req.params.id
+            );
 
     return res.json(opportunity);
 };
