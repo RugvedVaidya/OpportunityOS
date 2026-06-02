@@ -63,6 +63,16 @@ app.use(
     feedRoutes
 );
 
+const applicationRoutes =
+require(
+"./modules/application/application.routes"
+);
+
+app.use(
+    "/api/applications",
+    applicationRoutes
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 
