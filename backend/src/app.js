@@ -45,6 +45,24 @@ app.use(
     resumeRoutes
 );
 
+const jobSyncRoutes =
+require(
+"./modules/jobSync/jobSync.routes"
+);
+
+app.use(
+    "/api/jobs/sync",
+    jobSyncRoutes
+);
+
+const feedRoutes =
+require("./modules/feed/feed.routes");
+
+app.use(
+    "/api/feed",
+    feedRoutes
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 

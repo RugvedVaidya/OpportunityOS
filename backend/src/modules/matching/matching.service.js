@@ -1,8 +1,7 @@
 const prisma =
 require("../../config/prisma");
 
-const calculateSkillScore =
-(
+const calculateSkillScore = (
     userSkills,
     requiredSkills
 ) => {
@@ -11,10 +10,18 @@ const calculateSkillScore =
         return 0;
     }
 
+    const userSkillSet =
+        new Set(
+            userSkills.map(skill =>
+                skill.toLowerCase()
+            )
+        );
+
     const matched =
-        requiredSkills.filter(
-            skill =>
-                userSkills.includes(skill)
+        requiredSkills.filter(skill =>
+            userSkillSet.has(
+                skill.toLowerCase()
+            )
         );
 
     return (
@@ -23,8 +30,7 @@ const calculateSkillScore =
     ) * 100;
 };
 
-const calculateExperienceScore =
-(
+const calculateExperienceScore = (
     userExp,
     requiredExp
 ) => {
@@ -33,16 +39,16 @@ const calculateExperienceScore =
         return 100;
     }
 
-    return userExp >= requiredExp
-        ? 100
-        : (
+    return Math.min(
+        100,
+        (
             (userExp || 0) /
             requiredExp
-        ) * 100;
+        ) * 100
+    );
 };
 
-const calculateLocationScore =
-(
+const calculateLocationScore = (
     userLocation,
     jobLocation
 ) => {
@@ -59,8 +65,7 @@ const calculateLocationScore =
         : 0;
 };
 
-const calculateSalaryScore =
-(
+const calculateSalaryScore = (
     targetSalary,
     salaryMax
 ) => {
@@ -74,8 +79,39 @@ const calculateSalaryScore =
         : 0;
 };
 
-const calculateFinalScore =
-(
+const getSkillAnalysis = (
+    userSkills,
+    requiredSkills
+) => {
+
+    const userSkillSet =
+        new Set(
+            userSkills.map(skill =>
+                skill.toLowerCase()
+            )
+        );
+
+    const matchedSkills =
+        requiredSkills.filter(skill =>
+            userSkillSet.has(
+                skill.toLowerCase()
+            )
+        );
+
+    const missingSkills =
+        requiredSkills.filter(skill =>
+            !userSkillSet.has(
+                skill.toLowerCase()
+            )
+        );
+
+    return {
+        matchedSkills,
+        missingSkills
+    };
+};
+
+const calculateFinalScore = (
     profile,
     opportunity
 ) => {
@@ -145,10 +181,24 @@ async (userId) => {
                     opportunity
                 );
 
+            const analysis =
+                getSkillAnalysis(
+                    profile.skills || [],
+                    opportunity.requiredSkills || []
+                );
+
             return {
+
                 ...opportunity,
+
                 matchScore:
-                    Math.round(score)
+                    Math.round(score),
+
+                matchedSkills:
+                    analysis.matchedSkills,
+
+                missingSkills:
+                    analysis.missingSkills
             };
         })
 

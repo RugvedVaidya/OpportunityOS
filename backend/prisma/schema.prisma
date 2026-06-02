@@ -65,8 +65,11 @@ model Opportunity {
 
   type OpportunityType
 
-  requiredSkills String[]
-
+  requiredSkills:
+    extractSkills(
+        job.description || ""
+    )
+  
   experienceRequired Int?
 
   location String?
@@ -89,4 +92,27 @@ enum OpportunityType {
   INTERNSHIP
   HACKATHON
   SCHOLARSHIP
+}
+
+model Recommendation {
+
+  id String @id @default(uuid())
+
+  score Int
+
+  userId String
+
+  opportunityId String
+
+  createdAt DateTime @default(now())
+
+  user User @relation(
+    fields: [userId],
+    references: [id]
+  )
+
+  opportunity Opportunity @relation(
+    fields: [opportunityId],
+    references: [id]
+  )
 }
