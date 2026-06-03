@@ -2,30 +2,61 @@ const feedService =
 require("./feed.service");
 
 const getFeed =
-async (req, res) => {
+async (req,res) => {
 
-    const feed =
-        await feedService
-        .getFeed(
-            req.user.userId
-        );
+    try {
 
-    return res.json(feed);
+        const feed =
+            await feedService
+            .getFeed(
+                req.user.userId
+            );
+
+        return res.json(feed);
+
+    } catch(err){
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success:false,
+
+            message:
+                err.message
+        });
+    }
 };
 
 const getLearningPath =
-async (req, res) => {
+async (req,res) => {
 
-    const result =
-        await feedService
-        .getLearningPath(
-            req.user.userId
-        );
+    try {
 
-    return res.json({
-        topMissingSkills:
-            result
-    });
+        const result =
+            await feedService
+            .getLearningPath(
+                req.user.userId
+            );
+
+        return res.json({
+
+            topMissingSkills:
+                result
+        });
+
+    } catch(err){
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success:false,
+
+            message:
+                err.message
+        });
+    }
 };
 
 module.exports = {

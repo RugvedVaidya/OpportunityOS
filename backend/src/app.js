@@ -73,6 +73,26 @@ app.use(
     applicationRoutes
 );
 
+const dashboardRoutes =
+require(
+"./modules/dashboard/dashboard.routes"
+);
+
+app.use(
+    "/api/dashboard",
+    dashboardRoutes
+);
+
+const recommendationRoutes =
+require(
+"./modules/recommendation/recommendation.routes"
+);
+
+app.use(
+    "/api/recommendations",
+    recommendationRoutes
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 

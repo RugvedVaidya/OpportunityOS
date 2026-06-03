@@ -1,26 +1,102 @@
+const recommendationService =
+require(
+    "../recommendation/recommendation.service"
+);
+
 const matchingService =
-require("../matching/matching.service");
+require(
+    "../matching/matching.service"
+);
 
-const getFeed = async (
-    userId
-) => {
+const {
+    redisClient
+} = require(
+    "../../config/redis"
+);
 
-    const matches =
-        await matchingService
-        .getMatchesForUser(
+const getFeed =
+async (userId) => {
+
+    const cacheKey =
+    `feed:${userId}`;
+
+    const cachedFeed =
+    await redisClient.get(
+        cacheKey
+    );
+
+    if (cachedFeed) {
+
+        console.log(
+            "FEED CACHE HIT"
+        );
+
+        return JSON.parse(
+            cachedFeed
+        );
+    }
+
+    console.log(
+        "FEED CACHE MISS"
+    );
+
+    const recommendations =
+        await recommendationService
+        .getRecommendations(
             userId
         );
 
-    return matches.slice(
-        0,
-        20
+    const feed =
+        recommendations.map(
+            recommendation => ({
+
+                id:
+                    recommendation
+                    .opportunity.id,
+
+                title:
+                    recommendation
+                    .opportunity.title,
+
+                company:
+                    recommendation
+                    .opportunity.company,
+
+                description:
+                    recommendation
+                    .opportunity.description,
+
+                requiredSkills:
+                    recommendation
+                    .opportunity.requiredSkills,
+
+                location:
+                    recommendation
+                    .opportunity.location,
+
+                score:
+                    recommendation.score
+            })
+        );
+
+    await redisClient.set(
+
+        cacheKey,
+
+        JSON.stringify(
+            feed
+        ),
+
+        {
+            EX: 300
+        }
     );
+
+    return feed;
 };
 
 const getLearningPath =
-async (
-    userId
-) => {
+async (userId) => {
 
     const matches =
         await matchingService
@@ -32,9 +108,7 @@ async (
         {};
 
     matches
-
         .slice(0, 50)
-
         .forEach(match => {
 
             match.missingSkills
@@ -56,12 +130,12 @@ async (
             skillFrequency
         )
         .sort(
-            (a,b) =>
+            (a, b) =>
                 b[1] - a[1]
         )
         .slice(0, 10)
         .map(
-            ([skill,count]) => ({
+            ([skill, count]) => ({
                 skill,
                 count
             })

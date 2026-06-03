@@ -1,8 +1,13 @@
 require("dotenv").config();
 
-const app = require("./app");
+const app =
+require("./app");
 
-const PORT = process.env.PORT || 5000;
+const {
+    connectRedis
+} = require(
+    "./config/redis"
+);
 
 const {
     startJobSync
@@ -10,8 +15,34 @@ const {
     "./jobs/jobSync.cron"
 );
 
-startJobSync();
+const PORT =
+process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+const startServer =
+async () => {
+
+    try {
+
+        await connectRedis();
+
+        startJobSync();
+
+        app.listen(
+            PORT,
+            () => {
+
+                console.log(
+                    `Server running on ${PORT}`
+                );
+            }
+        );
+
+    } catch(err){
+
+        console.error(
+            err
+        );
+    }
+};
+
+startServer();

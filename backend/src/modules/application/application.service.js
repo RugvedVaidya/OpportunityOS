@@ -1,23 +1,36 @@
 const prisma =
 require("../../config/prisma");
 
+const {
+    redisClient
+} = require(
+    "../../config/redis"
+);
+
 const saveJob =
 async (
     userId,
     opportunityId
 ) => {
 
-    return prisma.application.create({
+    const application =
+        await prisma.application.create({
 
-        data: {
+            data: {
 
-            userId,
+                userId,
 
-            opportunityId,
+                opportunityId,
 
-            status: "SAVED"
-        }
-    });
+                status: "SAVED"
+            }
+        });
+
+    await redisClient.del(
+        `dashboard:${userId}`
+    );
+
+    return application;
 };
 
 const updateStatus =
@@ -26,22 +39,27 @@ async (
     status
 ) => {
 
-    return prisma.application.update({
+    const application =
+        await prisma.application.update({
 
-        where: {
-            id: applicationId
-        },
+            where: {
+                id: applicationId
+            },
 
-        data: {
-            status
-        }
-    });
+            data: {
+                status
+            }
+        });
+
+    await redisClient.del(
+        `dashboard:${application.userId}`
+    );
+
+    return application;
 };
 
 const getMyApplications =
-async (
-    userId
-) => {
+async (userId) => {
 
     return prisma.application.findMany({
 
@@ -60,7 +78,10 @@ async (
 };
 
 module.exports = {
+
     saveJob,
+
     updateStatus,
+
     getMyApplications
 };

@@ -1,10 +1,11 @@
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
 
-console.log(pdfParse);
-
 const prisma =
 require("../../config/prisma");
+
+const recommendationService =
+require("../recommendation/recommendation.service");
 
 const KNOWN_SKILLS = [
 
@@ -22,7 +23,11 @@ const KNOWN_SKILLS = [
     "Node.js",
     "Express",
     "React",
-    "TypeScript"
+    "TypeScript",
+    "Python",
+    "Go",
+    "GraphQL",
+    "Microservices"
 ];
 
 const extractSkills =
@@ -76,16 +81,26 @@ async (
 
     const profile =
     await prisma.profile.update({
+
         where: {
             userId
         },
+
         data: {
             skills
         }
     });
 
+    // Regenerate recommendations
+    await recommendationService
+        .generateRecommendations(
+            userId
+        );
+
     return {
+
         skills,
+
         profile
     };
 };

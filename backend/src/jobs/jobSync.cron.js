@@ -1,16 +1,21 @@
 const cron =
 require("node-cron");
 
+const prisma =
+require("../config/prisma");
+
 const jobSyncService =
-require(
-"../modules/jobSync/jobSync.service"
-);
+require("../modules/jobSync/jobSync.service");
+
+const recommendationService =
+require("../modules/recommendation/recommendation.service");
 
 const startJobSync =
 () => {
 
     cron.schedule(
-        "*/1 * * * *", // every one min - "*/1 * * * *", 6 hours - "0 */6 * * *"
+        "0 */6 * * *",
+
         async () => {
 
             console.log(
@@ -20,8 +25,23 @@ const startJobSync =
             try {
 
                 const result =
-                await jobSyncService
-                .syncJobs();
+                    await jobSyncService
+                    .syncJobs();
+
+                const users =
+                    await prisma.user
+                    .findMany();
+
+                for(
+                    const user
+                    of users
+                ){
+
+                    await recommendationService
+                    .generateRecommendations(
+                        user.id
+                    );
+                }
 
                 console.log(
                     "Sync complete:",
