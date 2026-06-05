@@ -1,6 +1,7 @@
-
-const resumeService =
-require("./resume.service");
+const resumeQueue =
+require(
+    "../../queues/resume.queue"
+);
 
 const uploadResume =
 async (
@@ -10,30 +11,70 @@ async (
 
     try {
 
-        const result =
-        await resumeService
-        .processResume(
-            req.file.path,
-            req.user.userId
+        if(!req.file){
+
+            return res
+                .status(400)
+                .json({
+
+                    success:false,
+
+                    message:
+                    "Resume file is required"
+                });
+        }
+
+        await resumeQueue.add(
+
+            "process-resume",
+
+            {
+
+                filePath:
+                    req.file.path,
+
+                userId:
+                    req.user.userId
+            },
+
+            {
+
+                attempts: 3,
+
+                backoff: {
+
+                    type:
+                    "exponential",
+
+                    delay:
+                    2000
+                }
+            }
         );
 
-        return res.json({
-            success:true,
-            extractedSkills:
-            result.skills
-        });
+        return res
+            .status(200)
+            .json({
+
+                success:true,
+
+                message:
+                "Resume queued for processing"
+            });
 
     } catch(err){
 
         console.error(err);
 
         return res
-        .status(500)
-        .json({
-            success:false,
-            message:
-            err.message
-        });
+            .status(500)
+            .json({
+
+                success:false,
+
+                message:
+                err.message
+            });
     }
 };
 

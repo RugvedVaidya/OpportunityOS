@@ -3,6 +3,10 @@ require("dotenv").config();
 const app =
 require("./app");
 
+require(
+    "./workers/resume.worker"
+);
+
 const {
     connectRedis
 } = require(
