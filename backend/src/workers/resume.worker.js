@@ -6,6 +6,9 @@ require(
     "../modules/resume/resume.service"
 );
 
+const bullmqConfig =
+require("../config/bullmq");
+
 const worker =
 new Worker(
 
@@ -40,45 +43,26 @@ new Worker(
         );
     },
 
-    {
-
-        connection: {
-
-            host:
-            "localhost",
-
-            port:
-            6379
-        }
-    }
+    bullmqConfig
 );
 
 worker.on(
-
     "completed",
-
     job => {
-
         console.log(
-
             `Job ${job.id} completed`
         );
     }
 );
 
 worker.on(
-
     "failed",
-
     (
         job,
         err
     ) => {
-
         console.error(
-
             `Job ${job.id} failed:`,
-
             err.message
         );
     }

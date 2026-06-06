@@ -6,6 +6,9 @@ require(
     "../modules/recommendation/recommendation.service"
 );
 
+const bullmqConfig =
+require("../config/bullmq");
+
 const worker =
 new Worker(
 
@@ -32,17 +35,7 @@ new Worker(
             );
     },
 
-    {
-
-        connection: {
-
-            host:
-            "localhost",
-
-            port:
-            6379
-        }
-    }
+    bullmqConfig
 );
 
 worker.on(

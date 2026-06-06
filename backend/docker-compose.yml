@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+
+  postgres:
+
+    image: postgres:16
+
+    container_name: opportunityos-postgres
+
+    restart: always
+
+    environment:
+
+      POSTGRES_USER: postgres
+
+      POSTGRES_PASSWORD: postgres
+
+      POSTGRES_DB: opportunityos
+
+    ports:
+
+      - "5432:5432"
+
+    volumes:
+
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+
+    image: redis:7
+
+    container_name: opportunityos-redis
+
+    restart: always
+
+    ports:
+
+      - "6379:6379"
+
+    volumes:
+
+      - redis_data:/data
+
+  backend:
+
+    build: .
+
+    container_name: opportunityos-backend
+
+    restart: always
+
+    depends_on:
+
+      - postgres
+
+      - redis
+
+    ports:
+
+      - "5000:5000"
+
+    env_file:
+
+      - .env
+
+volumes:
+
+  postgres_data:
+
+  redis_data:

@@ -1,20 +1,15 @@
 const { Queue } =
 require("bullmq");
 
+const bullmqConfig =
+require("../config/bullmq");
+
 const resumeQueue =
 new Queue(
 
     "resume-processing",
 
-    {
-
-        connection: {
-
-            host: "localhost",
-
-            port: 6379
-        }
-    }
+    bullmqConfig
 );
 
 module.exports =

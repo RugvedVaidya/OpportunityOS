@@ -1,20 +1,13 @@
 const { Queue } =
 require("bullmq");
 
+const bullmqConfig =
+require("../config/bullmq");
+
 const recommendationQueue =
 new Queue(
-
     "recommendation-processing",
-
-    {
-
-        connection: {
-
-            host: "localhost",
-
-            port: 6379
-        }
-    }
+    bullmqConfig
 );
 
 module.exports =
