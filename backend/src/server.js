@@ -7,6 +7,10 @@ require(
     "./workers/resume.worker"
 );
 
+require(
+    "./workers/recommendation.worker"
+);
+
 const {
     connectRedis
 } = require(

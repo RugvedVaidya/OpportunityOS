@@ -93,6 +93,16 @@ app.use(
     recommendationRoutes
 );
 
+const jobsRoutes =
+require(
+"./modules/jobs/jobs.routes"
+);
+
+app.use(
+    "/api/jobs",
+    jobsRoutes
+);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 
