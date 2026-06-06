@@ -1,47 +1,38 @@
 name: OpportunityOS CI
 
 on:
-
   push:
-
     branches:
-
       - main
 
   pull_request:
-
     branches:
-
       - main
 
 jobs:
-
   build:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
 
       - name: Checkout Code
-
         uses: actions/checkout@v4
 
       - name: Setup Node
-
         uses: actions/setup-node@v4
-
         with:
-
           node-version: 22
 
       - name: Install Dependencies
-
         run: npm install
 
       - name: Prisma Generate
-
         run: npx prisma generate
 
       - name: Build Docker Image
-
         run: docker build -t opportunityos .
